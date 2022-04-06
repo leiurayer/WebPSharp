@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using WebP.Net.Enum;
+using WebP.Net.Struct;
 
 namespace WebP.Net.Interop
 {
@@ -100,37 +102,179 @@ namespace WebP.Net.Interop
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate IntPtr WebPDecodeBGR(IntPtr data, UInt64 data_size, ref int width, ref int height);
 
+        /// <summary>
+        /// Decode WebP images pointed to by 'data' to Y'UV format(*). The pointer
+        /// returned is the Y samples buffer. Upon return, *u and *v will point to
+        /// the U and V chroma data. These U and V buffers need NOT be passed to
+        /// WebPFree(), unlike the returned Y luma one. The dimension of the U and V
+        /// planes are both (*width + 1) / 2 and (*height + 1)/ 2.
+        /// Upon return, the Y buffer has a stride returned as '*stride', while U and V
+        /// have a common stride returned as '*uv_stride'.
+        /// Return NULL in case of error.
+        /// (*) Also named Y'CbCr. See: https://en.wikipedia.org/wiki/YCbCr
+        /// <br/>
+        /// uint8_t* WebPDecodeYUV(const uint8_t* data, size_t data_size, int* width, int* height,
+        ///                        uint8_t** u, uint8_t** v, int* stride, int* uv_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="u"></param>
+        /// <param name="v"></param>
+        /// <param name="stride"></param>
+        /// <param name="uv_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeYUV(IntPtr data, UInt64 data_size, ref int width, ref int height,
+            ref IntPtr u, ref IntPtr v, ref int stride, ref int uv_stride);
+
+        /// <summary>
+        /// This function is variant of the above one, that decode the image
+        /// directly into a pre-allocated buffer 'output_buffer'. The maximum storage
+        /// available in this buffer is indicated by 'output_buffer_size'. If this
+        /// storage is not sufficient (or an error occurred), NULL is returned.
+        /// Otherwise, output_buffer is returned, for convenience.
+        /// The parameter 'output_stride' specifies the distance (in bytes)
+        /// between scanlines. Hence, output_buffer_size is expected to be at least
+        /// output_stride x picture-height.
+        /// <br/>
+        /// uint8_t* WebPDecodeRGBAInto(const uint8_t* data, size_t data_size,
+        ///                             uint8_t* output_buffer, size_t output_buffer_size, int output_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="output_buffer"></param>
+        /// <param name="output_buffer_size"></param>
+        /// <param name="output_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeRGBAInto(IntPtr data, UInt64 data_size,
+            IntPtr output_buffer, UInt64 output_buffer_size, int output_stride);
+
+        /// <summary>
+        /// Same as WebPDecodeRGBAInto.
+        /// <br/>
+        /// uint8_t* WebPDecodeARGBInto(const uint8_t* data, size_t data_size,
+        ///                             uint8_t* output_buffer, size_t output_buffer_size, int output_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="output_buffer"></param>
+        /// <param name="output_buffer_size"></param>
+        /// <param name="output_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeARGBInto(IntPtr data, UInt64 data_size,
+          IntPtr output_buffer, UInt64 output_buffer_size, int output_stride);
+
+        /// <summary>
+        /// Same as WebPDecodeRGBAInto.
+        /// <br/>
+        /// uint8_t* WebPDecodeBGRAInto(const uint8_t* data, size_t data_size,
+        ///                             uint8_t* output_buffer, size_t output_buffer_size, int output_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="output_buffer"></param>
+        /// <param name="output_buffer_size"></param>
+        /// <param name="output_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeBGRAInto(IntPtr data, UInt64 data_size,
+            IntPtr output_buffer, UInt64 output_buffer_size, int output_stride);
+
+        /// <summary>
+        /// Same as WebPDecodeRGBAInto.
+        /// But only RGB and BGR variants.
+        /// Here too the transparency information, if present,
+        /// will be dropped and ignored.
+        /// <br/>
+        /// uint8_t* WebPDecodeRGBInto(const uint8_t* data, size_t data_size,
+        ///                            uint8_t* output_buffer, size_t output_buffer_size, int output_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="output_buffer"></param>
+        /// <param name="output_buffer_size"></param>
+        /// <param name="output_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeRGBInto(IntPtr data, UInt64 data_size,
+           IntPtr output_buffer, UInt64 output_buffer_size, int output_stride);
+
+        /// <summary>
+        /// Same as WebPDecodeRGBAInto.
+        /// But only RGB and BGR variants.
+        /// Here too the transparency information, if present,
+        /// will be dropped and ignored.
+        /// <br/>
+        /// uint8_t* WebPDecodeBGRInto(const uint8_t* data, size_t data_size,
+        ///                            uint8_t* output_buffer, size_t output_buffer_size, int output_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="output_buffer"></param>
+        /// <param name="output_buffer_size"></param>
+        /// <param name="output_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeBGRInto(IntPtr data, UInt64 data_size,
+            IntPtr output_buffer, UInt64 output_buffer_size, int output_stride);
+
+        /// <summary>
+        /// WebPDecodeYUVInto() is a variant of WebPDecodeYUV() that operates directly
+        /// into pre-allocated luma/chroma plane buffers. This function requires the
+        /// strides to be passed: one for the luma plane and one for each of the
+        /// chroma ones. The size of each plane buffer is passed as 'luma_size',
+        /// 'u_size' and 'v_size' respectively.
+        /// Pointer to the luma plane ('*luma') is returned or NULL if an error occurred
+        /// during decoding (or because some buffers were found to be too small).
+        /// <br/>
+        /// uint8_t* WebPDecodeYUVInto(const uint8_t* data, size_t data_size,
+        ///                            uint8_t* luma, size_t luma_size, int luma_stride,
+        ///                            uint8_t* u, size_t u_size, int u_stride,
+        ///                            uint8_t* v, size_t v_size, int v_stride);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="luma"></param>
+        /// <param name="luma_size"></param>
+        /// <param name="luma_stride"></param>
+        /// <param name="u"></param>
+        /// <param name="u_size"></param>
+        /// <param name="u_stride"></param>
+        /// <param name="v"></param>
+        /// <param name="v_size"></param>
+        /// <param name="v_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPDecodeYUVInto(IntPtr data, UInt64 data_size,
+            IntPtr luma, UInt64 luma_size, int luma_stride,
+            IntPtr u, UInt64 u_size, int u_stride,
+            IntPtr v, UInt64 v_size, int v_stride);
+
+
+        /// <summary>
+        /// Retrieve features from the bitstream. The *features structure is filled
+        /// with information gathered from the bitstream.
+        /// Returns VP8_STATUS_OK when the features are successfully retrieved. Returns
+        /// VP8_STATUS_NOT_ENOUGH_DATA when more data is needed to retrieve the
+        /// features from headers. Returns error in other cases.
+        /// <br/>
+        /// VP8StatusCode WebPGetFeatures(const uint8_t* data, size_t data_size, WebPBitstreamFeatures* features);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name="features"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate VP8StatusCode WebPGetFeaturesInternal(IntPtr data, UInt64 data_size, ref WebPBitstreamFeatures features, int version);
+
 
         #endregion
 
-
-        //#region VP8 decode
-
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //internal delegate int VP8CheckSignature([MarshalAs(UnmanagedType.LPArray)] byte[] data, UInt64 data_size);
-
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //internal delegate int VP8GetInfo([MarshalAs(UnmanagedType.LPArray)] byte[] data, UInt64 data_size, UInt64 chunk_size, ref int width, ref int height);
-
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //internal delegate int VP8LCheckSignature([MarshalAs(UnmanagedType.LPArray)] byte[] data, UInt64 data_size);
-
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //internal delegate int VP8LGetInfo([MarshalAs(UnmanagedType.LPArray)] byte[] data, UInt64 data_size, ref int width, ref int height, ref int has_alpha);
-
-        //#endregion
-
-        //#region VP8 dsp
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //internal delegate int VP8GetCPUInfo(CPUFeature feature);
-        //#endregion
-
-        //#region WebP encode
-
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //internal delegate void WebPBlendAlpha(ref WebPPicture pic, uint background_rgb);
-
-        //#endregion
 
     }
 }

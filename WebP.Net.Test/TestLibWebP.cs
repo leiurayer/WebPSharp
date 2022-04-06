@@ -1,13 +1,42 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using WebP.Net.Enum;
+using WebP.Net.Struct;
 
 namespace WebP.Net.Test
 {
     [TestClass]
     public class TestLibWebP
     {
+        private readonly List<Image> ImageList = new List<Image>
+        {
+            new Image { Name = "Gallery/WebP Gallery/1.webp", Width = 550, Height = 368, HasAlpha = 0, HasAnimation = 0, Format = 1 },
+            new Image { Name = "Gallery/WebP Gallery/2.webp", Width = 550, Height = 404, HasAlpha = 0, HasAnimation = 0, Format = 1 },
+            new Image { Name = "Gallery/WebP Gallery/3.webp", Width = 1280, Height = 720, HasAlpha = 0, HasAnimation = 0, Format = 1 },
+            new Image { Name = "Gallery/WebP Gallery/4.webp", Width = 1024, Height = 772, HasAlpha = 0, HasAnimation = 0, Format = 1 },
+            new Image { Name = "Gallery/WebP Gallery/5.webp", Width = 1024, Height = 752, HasAlpha = 0, HasAnimation = 0, Format = 1 },
+
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/1_webp_ll.webp", Width = 400, Height = 301, HasAlpha = 1, HasAnimation = 0, Format = 2 },
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/1_webp_a.webp", Width = 400, Height = 301, HasAlpha = 1, HasAnimation = 0, Format = 1  },
+
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/2_webp_ll.webp", Width = 386, Height = 395, HasAlpha = 1, HasAnimation = 0, Format = 2  },
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/2_webp_a.webp", Width = 386, Height = 395, HasAlpha = 1, HasAnimation = 0, Format = 1  },
+
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/3_webp_ll.webp", Width = 800, Height = 600, HasAlpha = 1, HasAnimation = 0, Format = 2  },
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/3_webp_a.webp", Width = 800, Height = 600, HasAlpha = 1, HasAnimation = 0, Format = 1  },
+
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/4_webp_ll.webp", Width = 421, Height = 163, HasAlpha = 1, HasAnimation = 0, Format = 2  },
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/4_webp_a.webp", Width = 421, Height = 163, HasAlpha = 1, HasAnimation = 0, Format = 1  },
+
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/5_webp_ll.webp", Width = 300, Height = 300, HasAlpha = 1, HasAnimation = 0, Format = 2  },
+            new Image { Name = "Gallery/Lossless and Alpha Gallery/5_webp_a.webp", Width = 300, Height = 300, HasAlpha = 1, HasAnimation = 0, Format = 1  },
+        };
+
         [TestMethod]
         public void TestWebPGetDecoderVersion()
         {
@@ -29,24 +58,18 @@ namespace WebP.Net.Test
         {
             // test WebPGetInfo()
 
-            WebPGetInfo("Gallery/WebP Gallery/1.webp", 550, 368);
-            WebPGetInfo("Gallery/WebP Gallery/2.webp", 550, 404);
-            WebPGetInfo("Gallery/WebP Gallery/3.webp", 1280, 720);
-            WebPGetInfo("Gallery/WebP Gallery/4.webp", 1024, 772);
-            WebPGetInfo("Gallery/WebP Gallery/5.webp", 1024, 752);
-        }
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
 
-        private void WebPGetInfo(string img, int destWidth, int destHeight)
-        {
-            int width = 0;
-            int height = 0;
-            byte[] bytes = File.ReadAllBytes(img);
-            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
-
-            int info = LibWebP.WebPGetInfo(data, (uint)bytes.LongLength, ref width, ref height);
-            Assert.AreEqual(1, info);
-            Assert.AreEqual(destWidth, width);
-            Assert.AreEqual(destHeight, height);
+                int info = LibWebP.WebPGetInfo(data, (uint)bytes.LongLength, ref width, ref height);
+                Assert.AreEqual(1, info);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
         }
 
         [TestMethod]
@@ -54,24 +77,18 @@ namespace WebP.Net.Test
         {
             // test WebPDecodeRGBA()
 
-            WebPDecodeRGBA("Gallery/WebP Gallery/1.webp", 550, 368);
-            WebPDecodeRGBA("Gallery/WebP Gallery/2.webp", 550, 404);
-            WebPDecodeRGBA("Gallery/WebP Gallery/3.webp", 1280, 720);
-            WebPDecodeRGBA("Gallery/WebP Gallery/4.webp", 1024, 772);
-            WebPDecodeRGBA("Gallery/WebP Gallery/5.webp", 1024, 752);
-        }
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
 
-        private void WebPDecodeRGBA(string img, int destWidth, int destHeight)
-        {
-            int width = 0;
-            int height = 0;
-            byte[] bytes = File.ReadAllBytes(img);
-            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
-
-            IntPtr info = LibWebP.WebPDecodeRGBA(data, (uint)bytes.LongLength, ref width, ref height);
-            Assert.AreNotEqual(0, info);
-            Assert.AreEqual(destWidth, width);
-            Assert.AreEqual(destHeight, height);
+                IntPtr info = LibWebP.WebPDecodeRGBA(data, (uint)bytes.LongLength, ref width, ref height);
+                Assert.AreNotEqual(0, info);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
         }
 
         [TestMethod]
@@ -79,24 +96,18 @@ namespace WebP.Net.Test
         {
             // test WebPDecodeARGB()
 
-            WebPDecodeARGB("Gallery/WebP Gallery/1.webp", 550, 368);
-            WebPDecodeARGB("Gallery/WebP Gallery/2.webp", 550, 404);
-            WebPDecodeARGB("Gallery/WebP Gallery/3.webp", 1280, 720);
-            WebPDecodeARGB("Gallery/WebP Gallery/4.webp", 1024, 772);
-            WebPDecodeARGB("Gallery/WebP Gallery/5.webp", 1024, 752);
-        }
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
 
-        private void WebPDecodeARGB(string img, int destWidth, int destHeight)
-        {
-            int width = 0;
-            int height = 0;
-            byte[] bytes = File.ReadAllBytes(img);
-            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
-
-            IntPtr info = LibWebP.WebPDecodeARGB(data, (uint)bytes.LongLength, ref width, ref height);
-            Assert.AreNotEqual(0, info);
-            Assert.AreEqual(destWidth, width);
-            Assert.AreEqual(destHeight, height);
+                IntPtr info = LibWebP.WebPDecodeARGB(data, (uint)bytes.LongLength, ref width, ref height);
+                Assert.AreNotEqual(0, info);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
         }
 
         [TestMethod]
@@ -104,24 +115,18 @@ namespace WebP.Net.Test
         {
             // test WebPDecodeBGRA()
 
-            WebPDecodeBGRA("Gallery/WebP Gallery/1.webp", 550, 368);
-            WebPDecodeBGRA("Gallery/WebP Gallery/2.webp", 550, 404);
-            WebPDecodeBGRA("Gallery/WebP Gallery/3.webp", 1280, 720);
-            WebPDecodeBGRA("Gallery/WebP Gallery/4.webp", 1024, 772);
-            WebPDecodeBGRA("Gallery/WebP Gallery/5.webp", 1024, 752);
-        }
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
 
-        private void WebPDecodeBGRA(string img, int destWidth, int destHeight)
-        {
-            int width = 0;
-            int height = 0;
-            byte[] bytes = File.ReadAllBytes(img);
-            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
-
-            IntPtr info = LibWebP.WebPDecodeBGRA(data, (uint)bytes.LongLength, ref width, ref height);
-            Assert.AreNotEqual(0, info);
-            Assert.AreEqual(destWidth, width);
-            Assert.AreEqual(destHeight, height);
+                IntPtr info = LibWebP.WebPDecodeBGRA(data, (uint)bytes.LongLength, ref width, ref height);
+                Assert.AreNotEqual(0, info);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
         }
 
         [TestMethod]
@@ -129,24 +134,18 @@ namespace WebP.Net.Test
         {
             // test WebPDecodeRGB()
 
-            WebPDecodeRGB("Gallery/WebP Gallery/1.webp", 550, 368);
-            WebPDecodeRGB("Gallery/WebP Gallery/2.webp", 550, 404);
-            WebPDecodeRGB("Gallery/WebP Gallery/3.webp", 1280, 720);
-            WebPDecodeRGB("Gallery/WebP Gallery/4.webp", 1024, 772);
-            WebPDecodeRGB("Gallery/WebP Gallery/5.webp", 1024, 752);
-        }
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
 
-        private void WebPDecodeRGB(string img, int destWidth, int destHeight)
-        {
-            int width = 0;
-            int height = 0;
-            byte[] bytes = File.ReadAllBytes(img);
-            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
-
-            IntPtr info = LibWebP.WebPDecodeRGB(data, (uint)bytes.LongLength, ref width, ref height);
-            Assert.AreNotEqual(0, info);
-            Assert.AreEqual(destWidth, width);
-            Assert.AreEqual(destHeight, height);
+                IntPtr info = LibWebP.WebPDecodeRGB(data, (uint)bytes.LongLength, ref width, ref height);
+                Assert.AreNotEqual(0, info);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
         }
 
         [TestMethod]
@@ -154,26 +153,236 @@ namespace WebP.Net.Test
         {
             // test WebPDecodeBGR()
 
-            WebPDecodeBGR("Gallery/WebP Gallery/1.webp", 550, 368);
-            WebPDecodeBGR("Gallery/WebP Gallery/2.webp", 550, 404);
-            WebPDecodeBGR("Gallery/WebP Gallery/3.webp", 1280, 720);
-            WebPDecodeBGR("Gallery/WebP Gallery/4.webp", 1024, 772);
-            WebPDecodeBGR("Gallery/WebP Gallery/5.webp", 1024, 752);
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                IntPtr info = LibWebP.WebPDecodeBGR(data, (uint)bytes.LongLength, ref width, ref height);
+                Assert.AreNotEqual(0, info);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
         }
 
-        private void WebPDecodeBGR(string img, int destWidth, int destHeight)
+        [TestMethod]
+        public void TestWebPDecodeYUV()
         {
-            int width = 0;
-            int height = 0;
-            byte[] bytes = File.ReadAllBytes(img);
-            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+            // test WebPDecodeYUV()
 
-            IntPtr info = LibWebP.WebPDecodeBGR(data, (uint)bytes.LongLength, ref width, ref height);
-            Assert.AreNotEqual(0, info);
-            Assert.AreEqual(destWidth, width);
-            Assert.AreEqual(destHeight, height);
+            foreach (var item in ImageList)
+            {
+                int width = 0;
+                int height = 0;
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                IntPtr u = new IntPtr(((item.Width + 1) / 2) * ((item.Height + 1) / 2));
+                IntPtr v = new IntPtr(((item.Width + 1) / 2) * ((item.Height + 1) / 2));
+                int stride = 0;
+                int uv_stride = 0;
+
+                IntPtr y = LibWebP.WebPDecodeYUV(data, (uint)bytes.LongLength, ref width, ref height, ref u, ref v, ref stride, ref uv_stride);
+                Assert.AreNotEqual(0, y);
+                Assert.AreEqual(item.Width, width);
+                Assert.AreEqual(item.Height, height);
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecodeRGBAInto()
+        {
+            // test WebPDecodeRGBAInto()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                //Allocate canvas
+                Bitmap bitmap = new Bitmap(item.Width, item.Height, PixelFormat.Format32bppArgb);
+                //Lock surface for writing
+                BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                IntPtr info = LibWebP.WebPDecodeRGBAInto(data, (uint)bytes.LongLength, bitmapData.Scan0, (uint)(bitmapData.Stride * bitmapData.Height), bitmapData.Stride);
+                Assert.AreEqual(bitmapData.Scan0, info);
+
+                //Unlock surface
+                if (bitmapData != null && bitmap != null) bitmap.UnlockBits(bitmapData);
+                //Dispose of bitmap if anything went wrong
+                if (bitmap != null) bitmap.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecodeARGBInto()
+        {
+            // test WebPDecodeARGBInto()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                //Allocate canvas
+                Bitmap bitmap = new Bitmap(item.Width, item.Height, PixelFormat.Format32bppArgb);
+                //Lock surface for writing
+                BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                IntPtr info = LibWebP.WebPDecodeARGBInto(data, (uint)bytes.LongLength, bitmapData.Scan0, (uint)(bitmapData.Stride * bitmapData.Height), bitmapData.Stride);
+                Assert.AreEqual(bitmapData.Scan0, info);
+
+                //Unlock surface
+                if (bitmapData != null && bitmap != null) bitmap.UnlockBits(bitmapData);
+                //Dispose of bitmap if anything went wrong
+                if (bitmap != null) bitmap.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecodeBGRAInto()
+        {
+            // test WebPDecodeBGRAInto()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                //Allocate canvas
+                Bitmap bitmap = new Bitmap(item.Width, item.Height, PixelFormat.Format32bppArgb);
+                //Lock surface for writing
+                BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                IntPtr info = LibWebP.WebPDecodeBGRAInto(data, (uint)bytes.LongLength, bitmapData.Scan0, (uint)(bitmapData.Stride * bitmapData.Height), bitmapData.Stride);
+                Assert.AreEqual(bitmapData.Scan0, info);
+
+                //Unlock surface
+                if (bitmapData != null && bitmap != null) bitmap.UnlockBits(bitmapData);
+                //Dispose of bitmap if anything went wrong
+                if (bitmap != null) bitmap.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecodeRGBInto()
+        {
+            // test WebPDecodeRGBInto()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                //Allocate canvas
+                Bitmap bitmap = new Bitmap(item.Width, item.Height, PixelFormat.Format24bppRgb);
+                //Lock surface for writing
+                BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                IntPtr info = LibWebP.WebPDecodeRGBInto(data, (uint)bytes.LongLength, bitmapData.Scan0, (uint)(bitmapData.Stride * bitmapData.Height), bitmapData.Stride);
+                Assert.AreEqual(bitmapData.Scan0, info);
+
+                //Unlock surface
+                if (bitmapData != null && bitmap != null) bitmap.UnlockBits(bitmapData);
+                //Dispose of bitmap if anything went wrong
+                if (bitmap != null) bitmap.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecodeBGRInto()
+        {
+            // test WebPDecodeBGRInto()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                //Allocate canvas
+                Bitmap bitmap = new Bitmap(item.Width, item.Height, PixelFormat.Format24bppRgb);
+                //Lock surface for writing
+                BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                IntPtr info = LibWebP.WebPDecodeBGRInto(data, (uint)bytes.LongLength, bitmapData.Scan0, (uint)(bitmapData.Stride * bitmapData.Height), bitmapData.Stride);
+                Assert.AreEqual(bitmapData.Scan0, info);
+
+                //Unlock surface
+                if (bitmapData != null && bitmap != null) bitmap.UnlockBits(bitmapData);
+                //Dispose of bitmap if anything went wrong
+                if (bitmap != null) bitmap.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecodeYUVInto()
+        {
+            // test WebPDecodeYUVInto()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                uint lumaSize = (uint)(item.Width * item.Height);
+                IntPtr luma = new IntPtr(lumaSize);
+
+                uint uSize = (uint)(((item.Width + 1) / 2) * ((item.Height + 1) / 2));
+                IntPtr u = new IntPtr(uSize);
+
+                uint vSize = (uint)(((item.Width + 1) / 2) * ((item.Height + 1) / 2));
+                IntPtr v = new IntPtr(vSize);
+
+                int lumaStride = item.Width;
+                int uStride = item.Width;
+                int vStride = item.Width;
+
+                IntPtr y = LibWebP.WebPDecodeYUVInto(data, (uint)bytes.LongLength, luma, lumaSize, lumaStride,
+                    u, uSize, uStride, v, vSize, vStride);
+                Assert.AreNotEqual(0, y);
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPGetFeatures()
+        {
+            // test WebPGetFeatures()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                WebPBitstreamFeatures features = new WebPBitstreamFeatures();
+
+                VP8StatusCode code = LibWebP.WebPGetFeatures(data, (uint)bytes.LongLength, ref features);
+                Assert.AreEqual(VP8StatusCode.VP8_STATUS_OK, code);
+
+                Assert.AreEqual(item.Width, features.Width);
+                Assert.AreEqual(item.Height, features.Height);
+                Assert.AreEqual(item.HasAlpha, features.HasAlpha);
+                Assert.AreEqual(item.HasAnimation, features.HasAnimation);
+                Assert.AreEqual(item.Format, features.Format);
+
+                //Console.WriteLine("Width: {0}, Height: {1}, HasAlpha: {2}, HasAnimation: {3}, Format: {4}",
+                //    features.Width, features.Height,
+                //    features.HasAlpha, features.HasAnimation, features.Format);
+            }
         }
 
 
     }
+
+    struct Image
+    {
+        public string Name;
+        public int Width;
+        public int Height;
+        public int HasAlpha;
+        public int HasAnimation;
+        public int Format;
+    }
+
 }
