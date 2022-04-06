@@ -13,7 +13,13 @@
     <Grid Margin="20">
 
         <StackPanel>
-            <Button Click="Button_Click_WebPGetDecoderVersion" Content="test WebPGetDecoderVersion()" />
+            <Image
+                x:Name="nameTestWebP"
+                Margin="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top" />
+
+            <Button Click="Button_Click" Content="test WebPGetDecoderVersion()" />
 
         </StackPanel>
 
