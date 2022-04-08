@@ -24,7 +24,27 @@
             nl.FillDelegate(out WebPDecodeBGRInto);
             nl.FillDelegate(out WebPDecodeYUVInto);
 
+            nl.FillDelegate(out WebPInitDecBufferInternal);
+            nl.FillDelegate(out WebPFreeDecBuffer);
+
+            nl.FillDelegate(out WebPINewDecoder);
+            nl.FillDelegate(out WebPINewRGB);
+            nl.FillDelegate(out WebPINewYUVA);
+            nl.FillDelegate(out WebPINewYUV);
+
+            nl.FillDelegate(out WebPIDelete);
+            nl.FillDelegate(out WebPIAppend);
+            nl.FillDelegate(out WebPIUpdate);
+
+            nl.FillDelegate(out WebPIDecGetRGB);
+            nl.FillDelegate(out WebPIDecGetYUVA);
+            nl.FillDelegate(out WebPIDecodedArea);
+
             nl.FillDelegate(out WebPGetFeaturesInternal);
+            nl.FillDelegate(out WebPInitDecoderConfigInternal);
+
+            nl.FillDelegate(out WebPIDecode);
+            nl.FillDelegate(out WebPDecode);
 
             #endregion
         }
@@ -46,7 +66,27 @@
         internal static Delegate64.WebPDecodeBGRInto WebPDecodeBGRInto;
         internal static Delegate64.WebPDecodeYUVInto WebPDecodeYUVInto;
 
+        internal static Delegate64.WebPInitDecBufferInternal WebPInitDecBufferInternal;
+        internal static Delegate64.WebPFreeDecBuffer WebPFreeDecBuffer;
+
+        internal static Delegate64.WebPINewDecoder WebPINewDecoder;
+        internal static Delegate64.WebPINewRGB WebPINewRGB;
+        internal static Delegate64.WebPINewYUVA WebPINewYUVA;
+        internal static Delegate64.WebPINewYUV WebPINewYUV;
+
+        internal static Delegate64.WebPIDelete WebPIDelete;
+        internal static Delegate64.WebPIAppend WebPIAppend;
+        internal static Delegate64.WebPIUpdate WebPIUpdate;
+
+        internal static Delegate64.WebPIDecGetRGB WebPIDecGetRGB;
+        internal static Delegate64.WebPIDecGetYUVA WebPIDecGetYUVA;
+        internal static Delegate64.WebPIDecodedArea WebPIDecodedArea;
+
         internal static Delegate64.WebPGetFeaturesInternal WebPGetFeaturesInternal;
+        internal static Delegate64.WebPInitDecoderConfigInternal WebPInitDecoderConfigInternal;
+
+        internal static Delegate64.WebPIDecode WebPIDecode;
+        internal static Delegate64.WebPDecode WebPDecode;
 
         #endregion
 

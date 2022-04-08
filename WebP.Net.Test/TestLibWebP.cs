@@ -346,6 +346,269 @@ namespace WebP.Net.Test
         }
 
         [TestMethod]
+        public void TestWebPInitDecBuffer()
+        {
+            // test WebPInitDecBuffer()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+            return;
+        }
+
+        [TestMethod]
+        public void TestWebPFreeDecBuffer()
+        {
+            // test WebPFreeDecBuffer()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            LibWebP.WebPFreeDecBuffer(ref buffer);
+
+            return;
+        }
+
+        [TestMethod]
+        public void TestWebPINewDecoder()
+        {
+            // test WebPINewDecoder()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            return;
+        }
+
+        [TestMethod]
+        public void TestWebPINewRGB()
+        {
+            // test WebPINewRGB()
+
+            uint size = 1024 * 1024;
+            IntPtr output = new IntPtr(size);
+
+            IntPtr decoder = LibWebP.WebPINewRGB(WEBP_CSP_MODE.MODE_BGR, output, size, 1024);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            return;
+        }
+
+        [TestMethod]
+        public void TestWebPINewYUVA()
+        {
+            // test WebPINewYUVA()
+
+            uint lumaSize = (uint)(1024 * 1024);
+            IntPtr luma = new IntPtr(lumaSize);
+
+            uint uSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr u = new IntPtr(uSize);
+
+            uint vSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr v = new IntPtr(vSize);
+
+            uint aSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr a = new IntPtr(aSize);
+
+            int lumaStride = 1024;
+            int uStride = 1024;
+            int vStride = 1024;
+            int aStride = 1024;
+
+            IntPtr decoder = LibWebP.WebPINewYUVA(luma, lumaSize, lumaStride,
+                u, uSize, uStride,
+                v, vSize, vStride,
+                a, aSize, aStride);
+
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            return;
+        }
+
+        [TestMethod]
+        public void TestWebPINewYUV()
+        {
+            // test WebPINewYUV()
+
+            uint lumaSize = (uint)(1024 * 1024);
+            IntPtr luma = new IntPtr(lumaSize);
+
+            uint uSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr u = new IntPtr(uSize);
+
+            uint vSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr v = new IntPtr(vSize);
+
+            int lumaStride = 1024;
+            int uStride = 1024;
+            int vStride = 1024;
+
+            IntPtr decoder = LibWebP.WebPINewYUV(luma, lumaSize, lumaStride,
+                u, uSize, uStride,
+                v, vSize, vStride);
+
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            return;
+        }
+
+        [TestMethod]
+        public void TestWebPIDelete()
+        {
+            // test WebPIDelete()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            LibWebP.WebPIDelete(ref webPIDecoder);
+        }
+
+        [TestMethod]
+        public void TestWebPIAppend()
+        {
+            // test WebPIAppend()
+            // something wrong
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            uint size = 1024 * 1024;
+            IntPtr data = new IntPtr(size);
+
+            VP8StatusCode status = LibWebP.WebPIAppend(ref webPIDecoder, data, size);
+            Assert.AreEqual(VP8StatusCode.VP8_STATUS_OK, status);
+        }
+
+        [TestMethod]
+        public void TestWebPIUpdate()
+        {
+            // test WebPIUpdate()
+            // something wrong
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            uint size = 1024 * 1024;
+            IntPtr data = new IntPtr(size);
+
+            VP8StatusCode status = LibWebP.WebPIUpdate(ref webPIDecoder, data, size);
+            Assert.AreEqual(VP8StatusCode.VP8_STATUS_OK, status);
+        }
+
+        [TestMethod]
+        public void TestWebPIDecGetRGB()
+        {
+            // test WebPIDecGetRGB()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            int lastY = 0;
+            int width = 0;
+            int height = 0;
+            int stride = 0;
+
+            IntPtr r = LibWebP.WebPIDecGetRGB(ref webPIDecoder, ref lastY, ref width, ref height, ref stride);
+            Assert.AreNotEqual(null, r);
+        }
+
+        [TestMethod]
+        public void TestWebPIDecGetYUVA()
+        {
+            // test WebPIDecGetYUVA()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            uint uSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr u = new IntPtr(uSize);
+
+            uint vSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr v = new IntPtr(vSize);
+
+            uint aSize = (uint)(((1024 + 1) / 2) * ((1024 + 1) / 2));
+            IntPtr a = new IntPtr(aSize);
+
+            int lastY = 0;
+            int width = 0;
+            int height = 0;
+            int stride = 0;
+            int uvStride = 0;
+            int aStride = 0;
+
+            IntPtr r = LibWebP.WebPIDecGetYUVA(ref webPIDecoder, ref lastY, u, v, a,
+                ref width, ref height, ref stride, ref uvStride, ref aStride);
+            Assert.AreNotEqual(null, r);
+        }
+
+        [TestMethod]
+        public void TestWebPIDecodedArea()
+        {
+            // test WebPIDecodedArea()
+
+            WebPDecBuffer buffer = new WebPDecBuffer();
+            int result = LibWebP.WebPInitDecBuffer(ref buffer);
+            Assert.AreNotEqual(0, result);
+
+            IntPtr decoder = LibWebP.WebPINewDecoder(ref buffer);
+            Assert.AreNotEqual(null, decoder);
+
+            WebPIDecoder webPIDecoder = Utils.IntPtrToStruct<WebPIDecoder>(decoder);
+
+            int left = 0;
+            int top = 0;
+            int width = 0;
+            int height = 0;
+
+            IntPtr r = LibWebP.WebPIDecodedArea(ref webPIDecoder, ref left, ref top, ref width, ref height);
+            Assert.AreNotEqual(null, r);
+        }
+
+        [TestMethod]
         public void TestWebPGetFeatures()
         {
             // test WebPGetFeatures()
@@ -372,6 +635,51 @@ namespace WebP.Net.Test
             }
         }
 
+        [TestMethod]
+        public void TestWebPInitDecoderConfig()
+        {
+            // test WebPInitDecoderConfig()
+
+            WebPDecoderConfig config = new WebPDecoderConfig();
+
+            int result = LibWebP.WebPInitDecoderConfig(ref config);
+            Assert.AreNotEqual(0, result);
+        }
+
+        [TestMethod]
+        public void TestWebPIDecode()
+        {
+            // test WebPIDecode()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                WebPDecoderConfig config = new WebPDecoderConfig();
+
+                IntPtr result = LibWebP.WebPIDecode(data, (uint)bytes.LongLength, ref config);
+                Assert.AreNotEqual(null, result);
+            }
+        }
+
+        [TestMethod]
+        public void TestWebPDecode()
+        {
+            // test WebPDecode()
+
+            foreach (var item in ImageList)
+            {
+                byte[] bytes = File.ReadAllBytes(item.Name);
+                IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+                WebPDecoderConfig config = new WebPDecoderConfig();
+
+                VP8StatusCode result = LibWebP.WebPDecode(data, (uint)bytes.LongLength, ref config);
+                Assert.AreEqual(VP8StatusCode.VP8_STATUS_OK, result);
+
+            }
+        }
 
     }
 

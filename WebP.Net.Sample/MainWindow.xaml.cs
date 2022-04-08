@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WebP.Net.Enum;
+using WebP.Net.Exception;
 using WebP.Net.Struct;
 
 namespace WebP.Net.Sample
@@ -61,7 +62,7 @@ namespace WebP.Net.Sample
                 IntPtr info = LibWebP.WebPDecodeBGRAInto(data, (uint)bytes.LongLength, bitmapData.Scan0, (uint)(bitmapData.Stride * bitmapData.Height), bitmapData.Stride);
                 if (bitmapData.Scan0 != info)
                 {
-                    throw new System.Exception("Failed to decode WebP image with error " + (long)info);
+                    throw new WebPException("Failed to decode WebP image with error " + (long)info);
                 }
             }
 
@@ -79,7 +80,7 @@ namespace WebP.Net.Sample
 
 
         /// <summary>
-        /// Bitmap转BitmapImage
+        /// Bitmap to BitmapImage
         /// </summary>
         /// <param name="bitmap"></param>
         /// <returns></returns>

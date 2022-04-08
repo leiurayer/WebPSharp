@@ -208,16 +208,227 @@ namespace WebP.Net
             }
         }
 
-        public static VP8StatusCode WebPGetFeatures(IntPtr data, UInt32 size, ref WebPBitstreamFeatures features)
+        public static int WebPInitDecBuffer(ref WebPDecBuffer buffer)
         {
             if (UseX86)
             {
-                return WebP32.WebPGetFeaturesInternal(data, size, ref features, WEBP_DECODER_ABI_VERSION);
+                return WebP32.WebPInitDecBufferInternal(ref buffer, WEBP_DECODER_ABI_VERSION);
             }
             else
             {
-                UInt64 longSize = size;
+                return WebP64.WebPInitDecBufferInternal(ref buffer, WEBP_DECODER_ABI_VERSION);
+            }
+        }
+
+        public static void WebPFreeDecBuffer(ref WebPDecBuffer buffer)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPFreeDecBuffer(ref buffer);
+            }
+            else
+            {
+                WebP64.WebPFreeDecBuffer(ref buffer);
+            }
+        }
+
+        public static IntPtr WebPINewDecoder(ref WebPDecBuffer outputBuffer)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPINewDecoder(ref outputBuffer);
+            }
+            else
+            {
+                return WebP64.WebPINewDecoder(ref outputBuffer);
+            }
+        }
+
+        public static IntPtr WebPINewRGB(WEBP_CSP_MODE csp, IntPtr outputBuffer, UInt32 outputBufferSize, int outputStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPINewRGB(csp, outputBuffer, outputBufferSize, outputStride);
+            }
+            else
+            {
+                UInt64 longSize = outputBufferSize;
+                return WebP64.WebPINewRGB(csp, outputBuffer, longSize, outputStride);
+            }
+        }
+
+        public static IntPtr WebPINewYUVA(IntPtr luma, UInt32 lumaSize, int lumaStride,
+            IntPtr u, UInt32 uSize, int uStride,
+            IntPtr v, UInt32 vSize, int vStride,
+            IntPtr a, UInt32 aSize, int aStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPINewYUVA(luma, lumaSize, lumaStride,
+                    u, uSize, uStride,
+                    v, vSize, vStride,
+                    a, aSize, aStride);
+            }
+            else
+            {
+                UInt64 longLumaSize = lumaSize;
+                UInt64 longUSize = uSize;
+                UInt64 longVSize = vSize;
+                UInt64 longASize = aSize;
+                return WebP64.WebPINewYUVA(luma, longLumaSize, lumaStride,
+                    u, longUSize, uStride,
+                    v, longVSize, vStride,
+                    a, longASize, aStride);
+            }
+        }
+
+        public static IntPtr WebPINewYUV(IntPtr luma, UInt32 lumaSize, int lumaStride,
+            IntPtr u, UInt32 uSize, int uStride,
+            IntPtr v, UInt32 vSize, int vStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPINewYUV(luma, lumaSize, lumaStride,
+                    u, uSize, uStride,
+                    v, vSize, vStride);
+            }
+            else
+            {
+                UInt64 longLumaSize = lumaSize;
+                UInt64 longUSize = uSize;
+                UInt64 longVSize = vSize;
+                return WebP64.WebPINewYUV(luma, longLumaSize, lumaStride,
+                    u, longUSize, uStride,
+                    v, longVSize, vStride);
+            }
+        }
+
+        public static void WebPIDelete(ref WebPIDecoder idec)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPIDelete(ref idec);
+            }
+            else
+            {
+                WebP64.WebPIDelete(ref idec);
+            }
+        }
+
+        public static VP8StatusCode WebPIAppend(ref WebPIDecoder idec, IntPtr data, UInt32 dataSize)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPIAppend(ref idec, data, dataSize);
+            }
+            else
+            {
+                UInt64 longSize = dataSize;
+                return WebP64.WebPIAppend(ref idec, data, longSize);
+            }
+        }
+
+        public static VP8StatusCode WebPIUpdate(ref WebPIDecoder idec, IntPtr data, UInt32 dataSize)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPIUpdate(ref idec, data, dataSize);
+            }
+            else
+            {
+                UInt64 longSize = dataSize;
+                return WebP64.WebPIUpdate(ref idec, data, longSize);
+            }
+        }
+
+        public static IntPtr WebPIDecGetRGB(ref WebPIDecoder idec, ref int lastY, ref int width, ref int height, ref int stride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPIDecGetRGB(ref idec, ref lastY, ref width, ref height, ref stride);
+            }
+            else
+            {
+                return WebP64.WebPIDecGetRGB(ref idec, ref lastY, ref width, ref height, ref stride);
+            }
+        }
+
+        public static IntPtr WebPIDecGetYUVA(ref WebPIDecoder idec, ref int lastY,
+            IntPtr u, IntPtr v, IntPtr a,
+            ref int width, ref int height, ref int stride, ref int uvStride, ref int aStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPIDecGetYUVA(ref idec, ref lastY, u, v, a,
+                    ref width, ref height, ref stride, ref uvStride, ref aStride);
+            }
+            else
+            {
+                return WebP64.WebPIDecGetYUVA(ref idec, ref lastY, u, v, a,
+                    ref width, ref height, ref stride, ref uvStride, ref aStride);
+            }
+        }
+
+        public static IntPtr WebPIDecodedArea(ref WebPIDecoder idec, ref int left, ref int top, ref int width, ref int height)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPIDecodedArea(ref idec, ref left, ref top, ref width, ref height);
+            }
+            else
+            {
+                return WebP64.WebPIDecodedArea(ref idec, ref left, ref top, ref width, ref height);
+            }
+        }
+
+        public static VP8StatusCode WebPGetFeatures(IntPtr data, UInt32 dataSize, ref WebPBitstreamFeatures features)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPGetFeaturesInternal(data, dataSize, ref features, WEBP_DECODER_ABI_VERSION);
+            }
+            else
+            {
+                UInt64 longSize = dataSize;
                 return WebP64.WebPGetFeaturesInternal(data, longSize, ref features, WEBP_DECODER_ABI_VERSION);
+            }
+        }
+
+        public static int WebPInitDecoderConfig(ref WebPDecoderConfig config)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPInitDecoderConfigInternal(ref config, WEBP_DECODER_ABI_VERSION);
+            }
+            else
+            {
+                return WebP64.WebPInitDecoderConfigInternal(ref config, WEBP_DECODER_ABI_VERSION);
+            }
+        }
+
+        public static IntPtr WebPIDecode(IntPtr data, UInt32 dataSize, ref WebPDecoderConfig config)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPIDecode(data, dataSize, ref config);
+            }
+            else
+            {
+                UInt64 longSize = dataSize;
+                return WebP64.WebPIDecode(data, longSize, ref config);
+            }
+        }
+
+        public static VP8StatusCode WebPDecode(IntPtr data, UInt32 dataSize, ref WebPDecoderConfig config)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPDecode(data, dataSize, ref config);
+            }
+            else
+            {
+                UInt64 longSize = dataSize;
+                return WebP64.WebPDecode(data, longSize, ref config);
             }
         }
 
