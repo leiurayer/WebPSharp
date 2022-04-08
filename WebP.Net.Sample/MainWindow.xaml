@@ -19,7 +19,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top" />
 
-            <Button Click="Button_Click" Content="test WebPGetDecoderVersion()" />
+            <Button Click="Button_Click" Content="test WebP Decode" />
 
         </StackPanel>
 

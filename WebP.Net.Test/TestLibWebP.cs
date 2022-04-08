@@ -37,6 +37,8 @@ namespace WebP.Net.Test
             new Image { Name = "Gallery/Lossless and Alpha Gallery/5_webp_a.webp", Width = 300, Height = 300, HasAlpha = 1, HasAnimation = 0, Format = 1  },
         };
 
+        #region WebP decode
+
         [TestMethod]
         public void TestWebPGetDecoderVersion()
         {
@@ -48,7 +50,7 @@ namespace WebP.Net.Test
             var major = (version >> 16) % 256;
             string versionName = major + "." + minor + "." + revision;
 
-            // libwebp-1.2.2 
+            // libwebp-1.2.2
             Assert.AreEqual(66050, version);
             Assert.AreEqual("1.2.2", versionName);
         }
@@ -680,6 +682,35 @@ namespace WebP.Net.Test
 
             }
         }
+
+        #endregion
+
+        #region WebP encode
+
+        [TestMethod]
+        public void TestWebPGetEncoderVersion()
+        {
+            // test WebPGetEncoderVersion()
+            int version = LibWebP.WebPGetEncoderVersion();
+
+            var revision = version % 256;
+            var minor = (version >> 8) % 256;
+            var major = (version >> 16) % 256;
+            string versionName = major + "." + minor + "." + revision;
+
+            // libwebp-1.2.2
+            Assert.AreEqual(66050, version);
+            Assert.AreEqual("1.2.2", versionName);
+        }
+
+        #endregion
+
+
+
+
+
+
+
 
     }
 

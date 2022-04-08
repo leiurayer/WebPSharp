@@ -554,6 +554,171 @@ namespace WebP.Net.Interop
 
         #endregion
 
+        #region WebP encode
+
+        /// <summary>
+        /// Return the encoder's version number, packed in hexadecimal using 8bits for
+        /// each of major/minor/revision. E.g: v2.5.7 is 0x020507.
+        /// <br/>
+        /// int WebPGetEncoderVersion(void);
+        /// </summary>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPGetEncoderVersion();
+
+        /// <summary>
+        /// Returns the size of the compressed data (pointed to by *output), or 0 if
+        /// an error occurred. The compressed data must be released by the caller
+        /// using the call 'WebPFree(*output)'.
+        /// These functions compress using the lossy format, and the quality_factor
+        /// can go from 0 (smaller output, lower quality) to 100 (best quality,
+        /// larger output).
+        /// <br/>
+        /// size_t WebPEncodeRGB(const uint8_t* rgb,
+        ///                      int width, int height, int stride,
+        ///                      float quality_factor, uint8_t** output);
+        /// </summary>
+        /// <param name="rgb"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="quality_factor"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeRGB(IntPtr rgb,
+                                 int width, int height, int stride,
+                                 float quality_factor, IntPtr output);
+
+        /// <summary>
+        /// Same as WebPEncodeRGB
+        /// <br/>
+        /// size_t WebPEncodeBGR(const uint8_t* bgr,
+        ///                      int width, int height, int stride,
+        ///                      float quality_factor, uint8_t** output);
+        /// </summary>
+        /// <param name="bgr"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="quality_factor"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeBGR(IntPtr bgr,
+                           int width, int height, int stride,
+                           float quality_factor, IntPtr output);
+
+        /// <summary>
+        /// Same as WebPEncodeRGB
+        /// <br/>
+        /// size_t WebPEncodeRGBA(const uint8_t* rgba,
+        ///                       int width, int height, int stride,
+        ///                       float quality_factor, uint8_t** output);
+        /// </summary>
+        /// <param name="rgba"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="quality_factor"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeRGBA(IntPtr rgba,
+                           int width, int height, int stride,
+                           float quality_factor, IntPtr output);
+
+        /// <summary>
+        /// Same as WebPEncodeRGB
+        /// <br/>
+        /// size_t WebPEncodeBGRA(const uint8_t* bgra,
+        ///                       int width, int height, int stride,
+        ///                       float quality_factor, uint8_t** output);
+        /// </summary>
+        /// <param name="bgra"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="quality_factor"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeBGRA(IntPtr bgra,
+                           int width, int height, int stride,
+                           float quality_factor, IntPtr output);
+
+        /// <summary>
+        /// These functions are the equivalent of the above, but compressing in a
+        /// lossless manner. Files are usually larger than lossy format, but will
+        /// not suffer any compression loss.
+        /// Note these functions, like the lossy versions, use the library's default
+        /// settings. For lossless this means 'exact' is disabled. RGB values in
+        /// transparent areas will be modified to improve compression. To avoid this,
+        /// use WebPEncode() and set WebPConfig::exact to 1.
+        /// <br/>
+        /// size_t WebPEncodeLosslessRGB(const uint8_t* rgb,
+        ///                              int width, int height, int stride, uint8_t** output);
+        /// </summary>
+        /// <param name="bgra"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeLosslessRGB(IntPtr rgb,
+                           int width, int height, int stride, IntPtr output);
+
+        /// <summary>
+        /// Same as WebPEncodeLosslessRGB
+        /// <br/>
+        /// size_t WebPEncodeLosslessBGR(const uint8_t* bgr,
+        ///                              int width, int height, int stride, uint8_t** output);
+        /// </summary>
+        /// <param name="bgr"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeLosslessBGR(IntPtr bgr,
+                           int width, int height, int stride, IntPtr output);
+
+        /// <summary>
+        /// Same as WebPEncodeLosslessRGB
+        /// <br/>
+        /// size_t WebPEncodeLosslessRGBA(const uint8_t* rgba,
+        ///                               int width, int height, int stride, uint8_t** output);
+        /// </summary>
+        /// <param name="rgba"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeLosslessRGBA(IntPtr rgba,
+                           int width, int height, int stride, IntPtr output);
+
+        /// <summary>
+        /// Same as WebPEncodeLosslessRGB
+        /// <br/>
+        /// size_t WebPEncodeLosslessBGRA(const uint8_t* bgra,
+        ///                               int width, int height, int stride, uint8_t** output);
+        /// </summary>
+        /// <param name="bgra"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="stride"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate UInt64 WebPEncodeLosslessBGRA(IntPtr bgra,
+                           int width, int height, int stride, IntPtr output);
+
+
+        #endregion
 
     }
 }

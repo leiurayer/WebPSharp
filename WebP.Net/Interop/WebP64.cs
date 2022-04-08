@@ -45,8 +45,22 @@
 
             nl.FillDelegate(out WebPIDecode);
             nl.FillDelegate(out WebPDecode);
-
             #endregion
+
+            #region WebP encode
+            nl.FillDelegate(out WebPGetEncoderVersion);
+
+            nl.FillDelegate(out WebPEncodeRGB);
+            nl.FillDelegate(out WebPEncodeBGR);
+            nl.FillDelegate(out WebPEncodeRGBA);
+            nl.FillDelegate(out WebPEncodeBGRA);
+
+            nl.FillDelegate(out WebPEncodeLosslessRGB);
+            nl.FillDelegate(out WebPEncodeLosslessBGR);
+            nl.FillDelegate(out WebPEncodeLosslessRGBA);
+            nl.FillDelegate(out WebPEncodeLosslessBGRA);
+            #endregion
+
         }
 
         #region set WebP decode
@@ -87,6 +101,20 @@
 
         internal static Delegate64.WebPIDecode WebPIDecode;
         internal static Delegate64.WebPDecode WebPDecode;
+        #endregion
+
+        #region WebP encode
+        internal static Delegate64.WebPGetEncoderVersion WebPGetEncoderVersion;
+
+        internal static Delegate64.WebPEncodeRGB WebPEncodeRGB;
+        internal static Delegate64.WebPEncodeBGR WebPEncodeBGR;
+        internal static Delegate64.WebPEncodeRGBA WebPEncodeRGBA;
+        internal static Delegate64.WebPEncodeBGRA WebPEncodeBGRA;
+
+        internal static Delegate64.WebPEncodeLosslessRGB WebPEncodeLosslessRGB;
+        internal static Delegate64.WebPEncodeLosslessBGR WebPEncodeLosslessBGR;
+        internal static Delegate64.WebPEncodeLosslessRGBA WebPEncodeLosslessRGBA;
+        internal static Delegate64.WebPEncodeLosslessBGRA WebPEncodeLosslessBGRA;
 
         #endregion
 

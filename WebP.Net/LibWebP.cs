@@ -8,6 +8,7 @@ namespace WebP.Net
     public class LibWebP
     {
         private const int WEBP_DECODER_ABI_VERSION = 0x0209;
+        private const int WEBP_ENCODER_ABI_VERSION = 0x020f;
 
         private static readonly bool UseX86 = IntPtr.Size == 4;
 
@@ -434,6 +435,129 @@ namespace WebP.Net
 
         #endregion
 
+        #region WebP encode
+
+        public static int WebPGetEncoderVersion()
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPGetEncoderVersion();
+            }
+            else
+            {
+                return WebP64.WebPGetEncoderVersion();
+            }
+        }
+
+        public static UInt32 WebPEncodeRGB(IntPtr rgb,
+                                 int width, int height, int stride,
+                                 float qualityFactor, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeRGB(rgb, width, height, stride, qualityFactor, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeRGB(rgb, width, height, stride, qualityFactor, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeBGR(IntPtr bgr,
+                           int width, int height, int stride,
+                           float qualityFactor, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeBGR(bgr, width, height, stride, qualityFactor, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeBGR(bgr, width, height, stride, qualityFactor, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeRGBA(IntPtr rgba,
+                           int width, int height, int stride,
+                           float qualityFactor, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeRGBA(rgba, width, height, stride, qualityFactor, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeRGBA(rgba, width, height, stride, qualityFactor, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeBGRA(IntPtr bgra,
+                          int width, int height, int stride,
+                          float qualityFactor, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeBGRA(bgra, width, height, stride, qualityFactor, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeBGRA(bgra, width, height, stride, qualityFactor, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeLosslessRGB(IntPtr rgb,
+                          int width, int height, int stride, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeLosslessRGB(rgb, width, height, stride, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeLosslessRGB(rgb, width, height, stride, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeLosslessBGR(IntPtr bgr,
+                           int width, int height, int stride, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeLosslessBGR(bgr, width, height, stride, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeLosslessBGR(bgr, width, height, stride, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeLosslessRGBA(IntPtr rgba,
+                           int width, int height, int stride, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeLosslessRGBA(rgba, width, height, stride, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeLosslessRGBA(rgba, width, height, stride, output);
+            }
+        }
+
+        public static UInt32 WebPEncodeLosslessBGRA(IntPtr bgra,
+                          int width, int height, int stride, IntPtr output)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncodeLosslessBGRA(bgra, width, height, stride, output);
+            }
+            else
+            {
+                return (uint)WebP64.WebPEncodeLosslessBGRA(bgra, width, height, stride, output);
+            }
+        }
+
+        #endregion
 
     }
 }
