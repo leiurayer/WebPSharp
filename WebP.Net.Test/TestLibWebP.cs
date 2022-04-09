@@ -703,13 +703,32 @@ namespace WebP.Net.Test
             Assert.AreEqual("1.2.2", versionName);
         }
 
+
+        [TestMethod]
+        public void TestTemp()
+        {
+            byte[] bytes = File.ReadAllBytes(ImageList[0].Name);
+            IntPtr data = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+            WebPPicture picture = new WebPPicture();
+            LibWebP.WebPMemoryWrite(data, (uint)bytes.LongLength,ref picture);
+
+            //WebPPicture src = new WebPPicture();
+            //WebPPicture reference = new WebPPicture();
+            float[] result = new float[5];
+
+            int b = LibWebP.WebPPictureDistortion(ref picture, ref picture, 1, ref result);
+
+            Console.WriteLine(b);
+            Console.WriteLine(result[0]);
+            Console.WriteLine(result[1]);
+            Console.WriteLine(result[2]);
+            Console.WriteLine(result[3]);
+            Console.WriteLine(result[4]);
+        }
+
+
         #endregion
-
-
-
-
-
-
 
 
     }

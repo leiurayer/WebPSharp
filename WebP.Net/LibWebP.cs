@@ -10,6 +10,9 @@ namespace WebP.Net
         private const int WEBP_DECODER_ABI_VERSION = 0x0209;
         private const int WEBP_ENCODER_ABI_VERSION = 0x020f;
 
+        // maximum width/height allowed (inclusive), in pixels
+        private const int WEBP_MAX_DIMENSION = 16383;
+
         private static readonly bool UseX86 = IntPtr.Size == 4;
 
         #region WebP decode
@@ -557,7 +560,511 @@ namespace WebP.Net
             }
         }
 
+        public static int WebPConfigInit(ref WebPConfig config)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPConfigInitInternal(ref config, WebPPreset.WEBP_PRESET_DEFAULT, 75.0f, WEBP_ENCODER_ABI_VERSION);
+            }
+            else
+            {
+                return WebP64.WebPConfigInitInternal(ref config, WebPPreset.WEBP_PRESET_DEFAULT, 75.0f, WEBP_ENCODER_ABI_VERSION);
+            }
+        }
+
+        public static int WebPConfigPreset(ref WebPConfig config, WebPPreset preset, float quality)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPConfigInitInternal(ref config, preset, quality, WEBP_ENCODER_ABI_VERSION);
+            }
+            else
+            {
+                return WebP64.WebPConfigInitInternal(ref config, preset, quality, WEBP_ENCODER_ABI_VERSION);
+            }
+        }
+
+        public static int WebPConfigLosslessPreset(ref WebPConfig config, int level)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPConfigLosslessPreset(ref config, level);
+            }
+            else
+            {
+                return WebP64.WebPConfigLosslessPreset(ref config, level);
+            }
+        }
+
+        public static int WebPValidateConfig(ref WebPConfig config)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPValidateConfig(ref config);
+            }
+            else
+            {
+                return WebP64.WebPValidateConfig(ref config);
+            }
+        }
+
+        public static void WebPMemoryWriterInit(ref WebPMemoryWriter writer)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPMemoryWriterInit(ref writer);
+            }
+            else
+            {
+                WebP64.WebPMemoryWriterInit(ref writer);
+            }
+        }
+
+        public static void WebPMemoryWriterClear(ref WebPMemoryWriter writer)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPMemoryWriterClear(ref writer);
+            }
+            else
+            {
+                WebP64.WebPMemoryWriterClear(ref writer);
+            }
+        }
+
+        public static int WebPMemoryWrite(IntPtr data, UInt32 dataSize, ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPMemoryWrite(data, dataSize, ref picture);
+            }
+            else
+            {
+                UInt64 longSize = dataSize;
+                return WebP64.WebPMemoryWrite(data, longSize, ref picture);
+            }
+        }
+
+        public static int WebPPictureInit(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureInitInternal(ref picture, WEBP_ENCODER_ABI_VERSION);
+            }
+            else
+            {
+                return WebP64.WebPPictureInitInternal(ref picture, WEBP_ENCODER_ABI_VERSION);
+            }
+        }
+
+        public static int WebPPictureAlloc(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureAlloc(ref picture);
+            }
+            else
+            {
+                return WebP64.WebPPictureAlloc(ref picture);
+            }
+        }
+
+        public static void WebPPictureFree(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPPictureFree(ref picture);
+            }
+            else
+            {
+                WebP64.WebPPictureFree(ref picture);
+            }
+        }
+
+        public static int WebPPictureCopy(ref WebPPicture src, ref WebPPicture dst)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureCopy(ref src, ref dst);
+            }
+            else
+            {
+                return WebP64.WebPPictureCopy(ref src, ref dst);
+            }
+        }
+
+        public static int WebPPlaneDistortion(IntPtr src, UInt32 srcStride, IntPtr reference, UInt32 refStride,
+           int width, int height, UInt32 xStep, int type,
+           ref float distortion, ref float result)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPlaneDistortion(src, srcStride, reference, refStride,
+                    width, height, xStep, type,
+                    ref distortion, ref result);
+            }
+            else
+            {
+                UInt64 longSrcStride = srcStride;
+                UInt64 longRefStride = refStride;
+                UInt64 longXStep = xStep;
+                return WebP64.WebPPlaneDistortion(src, longSrcStride, reference, longRefStride,
+                    width, height, longXStep, type,
+                    ref distortion, ref result);
+            }
+        }
+
+        public static int WebPPictureDistortion(ref WebPPicture src, ref WebPPicture reference, int metric_type, ref float[] result)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureDistortion(ref src, ref reference, metric_type, result);
+            }
+            else
+            {
+                return WebP64.WebPPictureDistortion(ref src, ref reference, metric_type, result);
+            }
+        }
+
+        public static int WebPPictureCrop(ref WebPPicture picture, int left, int top, int width, int height)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureCrop(ref picture, left, top, width, height);
+            }
+            else
+            {
+                return WebP64.WebPPictureCrop(ref picture, left, top, width, height);
+            }
+        }
+
+        public static int WebPPictureView(ref WebPPicture src, int left, int top, int width, int height, ref WebPPicture dst)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureView(ref src, left, top, width, height, ref dst);
+            }
+            else
+            {
+                return WebP64.WebPPictureView(ref src, left, top, width, height, ref dst);
+            }
+        }
+
+        public static int WebPPictureIsView(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureIsView(ref picture);
+            }
+            else
+            {
+                return WebP64.WebPPictureIsView(ref picture);
+            }
+        }
+
+        public static int WebPPictureRescale(ref WebPPicture pic, int width, int height)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureRescale(ref pic, width, height);
+            }
+            else
+            {
+                return WebP64.WebPPictureRescale(ref pic, width, height);
+            }
+        }
+
+        public static int WebPPictureImportRGB(ref WebPPicture picture, IntPtr rgb, int rgbStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureImportRGB(ref picture, rgb, rgbStride);
+            }
+            else
+            {
+                return WebP64.WebPPictureImportRGB(ref picture, rgb, rgbStride);
+            }
+        }
+
+        public static int WebPPictureImportRGBA(ref WebPPicture picture, IntPtr rgba, int rgbaStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureImportRGBA(ref picture, rgba, rgbaStride);
+            }
+            else
+            {
+                return WebP64.WebPPictureImportRGBA(ref picture, rgba, rgbaStride);
+            }
+        }
+
+        public static int WebPPictureImportRGBX(ref WebPPicture picture, IntPtr rgbx, int rgbxStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureImportRGBX(ref picture, rgbx, rgbxStride);
+            }
+            else
+            {
+                return WebP64.WebPPictureImportRGBX(ref picture, rgbx, rgbxStride);
+            }
+        }
+
+        public static int WebPPictureImportBGR(ref WebPPicture picture, IntPtr bgr, int bgrStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureImportBGR(ref picture, bgr, bgrStride);
+            }
+            else
+            {
+                return WebP64.WebPPictureImportBGR(ref picture, bgr, bgrStride);
+            }
+        }
+
+        public static int WebPPictureImportBGRA(ref WebPPicture picture, IntPtr bgra, int bgraStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureImportBGRA(ref picture, bgra, bgraStride);
+            }
+            else
+            {
+                return WebP64.WebPPictureImportBGRA(ref picture, bgra, bgraStride);
+            }
+        }
+
+        public static int WebPPictureImportBGRX(ref WebPPicture picture, IntPtr bgrx, int bgrxStride)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureImportBGRX(ref picture, bgrx, bgrxStride);
+            }
+            else
+            {
+                return WebP64.WebPPictureImportBGRX(ref picture, bgrx, bgrxStride);
+            }
+        }
+
+        public static int WebPPictureARGBToYUVA(ref WebPPicture picture, WebPEncCSP colorspace)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureARGBToYUVA(ref picture, colorspace);
+            }
+            else
+            {
+                return WebP64.WebPPictureARGBToYUVA(ref picture, colorspace);
+            }
+        }
+
+        public static int WebPPictureARGBToYUVADithered(ref WebPPicture picture, WebPEncCSP colorspace, float dithering)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureARGBToYUVADithered(ref picture, colorspace, dithering);
+            }
+            else
+            {
+                return WebP64.WebPPictureARGBToYUVADithered(ref picture, colorspace, dithering);
+            }
+        }
+
+        public static int WebPPictureSharpARGBToYUVA(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureSharpARGBToYUVA(ref picture);
+            }
+            else
+            {
+                return WebP64.WebPPictureSharpARGBToYUVA(ref picture);
+            }
+        }
+
+        public static int WebPPictureSmartARGBToYUVA(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureSmartARGBToYUVA(ref picture);
+            }
+            else
+            {
+                return WebP64.WebPPictureSmartARGBToYUVA(ref picture);
+            }
+        }
+
+        public static int WebPPictureYUVAToARGB(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureYUVAToARGB(ref picture);
+            }
+            else
+            {
+                return WebP64.WebPPictureYUVAToARGB(ref picture);
+            }
+        }
+
+        public static void WebPCleanupTransparentArea(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPCleanupTransparentArea(ref picture);
+            }
+            else
+            {
+                WebP64.WebPCleanupTransparentArea(ref picture);
+            }
+        }
+
+        public static int WebPPictureHasTransparency(ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPPictureHasTransparency(ref picture);
+            }
+            else
+            {
+                return WebP64.WebPPictureHasTransparency(ref picture);
+            }
+        }
+
+        public static void WebPBlendAlpha(ref WebPPicture pic, UInt32 backgroundRgb)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPBlendAlpha(ref pic, backgroundRgb);
+            }
+            else
+            {
+                UInt64 longRgb = backgroundRgb;
+                WebP64.WebPBlendAlpha(ref pic, longRgb);
+            }
+        }
+
+        public static int WebPEncode(ref WebPConfig config, ref WebPPicture picture)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPEncode(ref config, ref picture);
+            }
+            else
+            {
+                return WebP64.WebPEncode(ref config, ref picture);
+            }
+        }
+
         #endregion
+
+        #region utils
+
+        public static IntPtr WebPSafeMalloc(UInt64 nmemb, UInt32 size)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPSafeMalloc(nmemb, size);
+            }
+            else
+            {
+                UInt64 longSize = size;
+                return WebP64.WebPSafeMalloc(nmemb, longSize);
+            }
+        }
+
+        public static IntPtr WebPSafeCalloc(UInt64 nmemb, UInt32 size)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPSafeCalloc(nmemb, size);
+            }
+            else
+            {
+                UInt64 longSize = size;
+                return WebP64.WebPSafeCalloc(nmemb, longSize);
+            }
+        }
+
+        public static void WebPSafeFree(IntPtr ptr)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPSafeFree(ptr);
+            }
+            else
+            {
+                WebP64.WebPSafeFree(ptr);
+            }
+        }
+
+        public static void WebPCopyPlane(IntPtr src, int srcStride, IntPtr dst, int dstStride, int width, int height)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPCopyPlane(src, srcStride, dst, dstStride, width, height);
+            }
+            else
+            {
+                WebP64.WebPCopyPlane(src, srcStride, dst, dstStride, width, height);
+            }
+        }
+
+        public static void WebPCopyPixels(ref WebPPicture src, ref WebPPicture dst)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPCopyPixels(ref src, ref dst);
+            }
+            else
+            {
+                WebP64.WebPCopyPixels(ref src, ref dst);
+            }
+        }
+
+        public static int WebPGetColorPalette(ref WebPPicture pic, IntPtr palette)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPGetColorPalette(ref pic, palette);
+            }
+            else
+            {
+                return WebP64.WebPGetColorPalette(ref pic, palette);
+            }
+        }
+
+        #endregion
+
+        #region types
+
+        public static IntPtr WebPMalloc(UInt32 size)
+        {
+            if (UseX86)
+            {
+                return WebP32.WebPMalloc(size);
+            }
+            else
+            {
+                UInt64 longSize = size;
+                return WebP64.WebPMalloc(longSize);
+            }
+        }
+
+        public static void WebPFree(IntPtr ptr)
+        {
+            if (UseX86)
+            {
+                WebP32.WebPFree(ptr);
+            }
+            else
+            {
+                WebP64.WebPFree(ptr);
+            }
+        }
+
+        #endregion
+
+
 
     }
 }

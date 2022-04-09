@@ -717,6 +717,570 @@ namespace WebP.Net.Interop
         internal delegate UInt64 WebPEncodeLosslessBGRA(IntPtr bgra,
                            int width, int height, int stride, IntPtr output);
 
+        /// <summary>
+        /// Internal, version-checked, entry point
+        /// <br/>
+        /// Should always be called, to initialize a fresh WebPConfig structure before
+        /// modification. Returns false in case of version mismatch. WebPConfigInit()
+        /// must have succeeded before using the 'config' object.
+        /// Note that the default values are lossless=0 and quality=75.
+        /// <br/>
+        /// int WebPConfigInitInternal(WebPConfig* config, WebPPreset preset, float quality, int version);
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="preset"></param>
+        /// <param name="quality"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPConfigInitInternal(ref WebPConfig config, WebPPreset preset, float quality, int version);
+
+        /// <summary>
+        /// Activate the lossless compression mode with the desired efficiency level
+        /// between 0 (fastest, lowest compression) and 9 (slower, best compression).
+        /// A good default level is '6', providing a fair tradeoff between compression
+        /// speed and final compressed size.
+        /// This function will overwrite several fields from config: 'method', 'quality'
+        /// and 'lossless'. Returns false in case of parameter error.
+        /// <br/>
+        /// int WebPConfigLosslessPreset(WebPConfig* config, int level);
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPConfigLosslessPreset(ref WebPConfig config, int level);
+
+        /// <summary>
+        /// Returns true if 'config' is non-NULL and all configuration parameters are
+        /// within their valid ranges.
+        /// <br/>
+        /// int WebPValidateConfig(const WebPConfig* config);
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPValidateConfig(ref WebPConfig config);
+
+        /// <summary>
+        /// The following must be called first before any use.
+        /// <br/>
+        /// void WebPMemoryWriterInit(WebPMemoryWriter* writer);
+        /// </summary>
+        /// <param name="writer"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPMemoryWriterInit(ref WebPMemoryWriter writer);
+
+        /// <summary>
+        /// The following must be called to deallocate writer->mem memory. The 'writer'
+        /// object itself is not deallocated.
+        /// <br/>
+        /// void WebPMemoryWriterClear(WebPMemoryWriter* writer);
+        /// </summary>
+        /// <param name="writer"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPMemoryWriterClear(ref WebPMemoryWriter writer);
+
+        /// <summary>
+        /// The custom writer to be used with WebPMemoryWriter as custom_ptr. Upon
+        /// completion, writer.mem and writer.size will hold the coded data.
+        /// writer.mem must be freed by calling WebPMemoryWriterClear.
+        /// <br/>
+        /// int WebPMemoryWrite(const uint8_t* data, size_t data_size, const WebPPicture* picture);
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="data_size"></param>
+        /// <param name=""></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPMemoryWrite(IntPtr data, UInt64 data_size, ref WebPPicture picture);
+
+        /// <summary>
+        /// Internal, version-checked, entry point
+        /// <br/>
+        /// Should always be called, to initialize the structure. Returns false in case
+        /// of version mismatch. WebPPictureInit() must have succeeded before using the
+        /// 'picture' object.
+        /// Note that, by default, use_argb is false and colorspace is WEBP_YUV420.
+        /// <br/>
+        /// int WebPPictureInitInternal(WebPPicture* picture, int version);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureInitInternal(ref WebPPicture picture, int version);
+
+        /// <summary>
+        /// Convenience allocation / deallocation based on picture->width/height:
+        /// Allocate y/u/v buffers as per colorspace/width/height specification.
+        /// Note! This function will free the previous buffer if needed.
+        /// Returns false in case of memory error.
+        /// <br/>
+        /// int WebPPictureAlloc(WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureAlloc(ref WebPPicture picture);
+
+        /// <summary>
+        /// Release the memory allocated by WebPPictureAlloc() or WebPPictureImport*().
+        /// Note that this function does _not_ free the memory used by the 'picture'
+        /// object itself.
+        /// Besides memory (which is reclaimed) all other fields of 'picture' are
+        /// preserved.
+        /// <br/>
+        /// void WebPPictureFree(WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPPictureFree(ref WebPPicture picture);
+
+        /// <summary>
+        /// Copy the pixels of *src into *dst, using WebPPictureAlloc. Upon return, *dst
+        /// will fully own the copied pixels (this is not a view). The 'dst' picture need
+        /// not be initialized as its content is overwritten.
+        /// Returns false in case of memory allocation error.
+        /// <br/>
+        /// int WebPPictureCopy(const WebPPicture* src, WebPPicture* dst);
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dst"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureCopy(ref WebPPicture src, ref WebPPicture dst);
+
+        /// <summary>
+        /// Compute the single distortion for packed planes of samples.
+        /// 'src' will be compared to 'ref', and the raw distortion stored into
+        /// '*distortion'. The refined metric (log(MSE), log(1 - ssim),...' will be
+        /// stored in '*result'.
+        /// 'x_step' is the horizontal stride (in bytes) between samples.
+        /// 'src/ref_stride' is the byte distance between rows.
+        /// Returns false in case of error (bad parameter, memory allocation error, ...).
+        /// <br/>
+        /// int WebPPlaneDistortion(const uint8_t* src, size_t src_stride,
+        ///                         const uint8_t* ref, size_t ref_stride,
+        ///                         int width, int height,
+        ///                         size_t x_step,
+        ///                         int type,   // 0 = PSNR, 1 = SSIM, 2 = LSIM
+        ///                         float* distortion, float* result);
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="src_stride"></param>
+        /// <param name="ref_"></param>
+        /// <param name="ref_stride"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="x_step"></param>
+        /// <param name="type">0 = PSNR, 1 = SSIM, 2 = LSIM</param>
+        /// <param name="distortion"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPlaneDistortion(IntPtr src, UInt64 src_stride, IntPtr reference, UInt64 ref_stride,
+            int width, int height, UInt64 x_step, int type,
+            ref float distortion, ref float result);
+
+        /// <summary>
+        /// Compute PSNR, SSIM or LSIM distortion metric between two pictures. Results
+        /// are in dB, stored in result[] in the B/G/R/A/All order. The distortion is
+        /// always performed using ARGB samples. Hence if the input is YUV(A), the
+        /// picture will be internally converted to ARGB (just for the measurement).
+        /// Warning: this function is rather CPU-intensive.
+        /// <br/>
+        /// int WebPPictureDistortion(const WebPPicture* src, const WebPPicture* ref,
+        ///                           int metric_type,           // 0 = PSNR, 1 = SSIM, 2 = LSIM
+        ///                           float result[5]);
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="ref_"></param>
+        /// <param name="metric_type"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureDistortion(ref WebPPicture src, ref WebPPicture reference, int metric_type,
+            [MarshalAs(UnmanagedType.LPArray, SizeConst = 5)] float[] result);
+
+        /// <summary>
+        /// self-crops a picture to the rectangle defined by top/left/width/height.
+        /// Returns false in case of memory allocation error, or if the rectangle is
+        /// outside of the source picture.
+        /// The rectangle for the view is defined by the top-left corner pixel
+        /// coordinates (left, top) as well as its width and height. This rectangle
+        /// must be fully be comprised inside the 'src' source picture. If the source
+        /// picture uses the YUV420 colorspace, the top and left coordinates will be
+        /// snapped to even values.
+        /// <br/>
+        /// int WebPPictureCrop(WebPPicture* picture, int left, int top, int width, int height);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureCrop(ref WebPPicture picture, int left, int top, int width, int height);
+
+        /// <summary>
+        /// Extracts a view from 'src' picture into 'dst'. The rectangle for the view
+        /// is defined by the top-left corner pixel coordinates (left, top) as well
+        /// as its width and height. This rectangle must be fully be comprised inside
+        /// the 'src' source picture. If the source picture uses the YUV420 colorspace,
+        /// the top and left coordinates will be snapped to even values.
+        /// Picture 'src' must out-live 'dst' picture. Self-extraction of view is allowed
+        /// ('src' equal to 'dst') as a mean of fast-cropping (but note that doing so,
+        /// the original dimension will be lost). Picture 'dst' need not be initialized
+        /// with WebPPictureInit() if it is different from 'src', since its content will
+        /// be overwritten.
+        /// Returns false in case of memory allocation error or invalid parameters.
+        /// <br/>
+        /// int WebPPictureView(const WebPPicture* src, int left, int top, int width, int height, WebPPicture* dst);
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="dst"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureView(ref WebPPicture src, int left, int top, int width, int height, ref WebPPicture dst);
+
+        /// <summary>
+        /// Returns true if the 'picture' is actually a view and therefore does
+        /// not own the memory for pixels.
+        /// <br/>
+        /// int WebPPictureIsView(const WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureIsView(ref WebPPicture picture);
+
+        /// <summary>
+        /// Rescale a picture to new dimension width x height.
+        /// If either 'width' or 'height' (but not both) is 0 the corresponding
+        /// dimension will be calculated preserving the aspect ratio.
+        /// No gamma correction is applied.
+        /// Returns false in case of error (invalid parameter or insufficient memory).
+        /// <br/>
+        /// int WebPPictureRescale(WebPPicture* pic, int width, int height);
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureRescale(ref WebPPicture pic, int width, int height);
+
+        /// <summary>
+        /// Colorspace conversion function to import RGB samples.
+        /// Previous buffer will be free'd, if any.
+        /// *rgb buffer should have a size of at least height * rgb_stride.
+        /// Returns false in case of memory error.
+        /// <br/>
+        /// int WebPPictureImportRGB(WebPPicture* picture, const uint8_t* rgb, int rgb_stride);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="rgb"></param>
+        /// <param name="rgb_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureImportRGB(ref WebPPicture picture, IntPtr rgb, int rgb_stride);
+
+        /// <summary>
+        /// Same, but for RGBA buffer.
+        /// <br/>
+        /// int WebPPictureImportRGBA(WebPPicture* picture, const uint8_t* rgba, int rgba_stride);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="rgba"></param>
+        /// <param name="rgba_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureImportRGBA(ref WebPPicture picture, IntPtr rgba, int rgba_stride);
+
+        /// <summary>
+        /// Same, but for RGBA buffer. Imports the RGB direct from the 32-bit format
+        /// input buffer ignoring the alpha channel. Avoids needing to copy the data
+        /// to a temporary 24-bit RGB buffer to import the RGB only.
+        /// <br/>
+        /// int WebPPictureImportRGBX(WebPPicture* picture, const uint8_t* rgbx, int rgbx_stride);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="rgbx"></param>
+        /// <param name="rgbx_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureImportRGBX(ref WebPPicture picture, IntPtr rgbx, int rgbx_stride);
+
+        /// <summary>
+        /// Variants of the above, but taking BGR(A|X) input.
+        /// <br/>
+        /// int WebPPictureImportBGR(WebPPicture* picture, const uint8_t* bgr, int bgr_stride);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="bgr"></param>
+        /// <param name="bgr_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureImportBGR(ref WebPPicture picture, IntPtr bgr, int bgr_stride);
+
+        /// <summary>
+        /// int WebPPictureImportBGRA(WebPPicture* picture, const uint8_t* bgra, int bgra_stride);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="bgra"></param>
+        /// <param name="bgra_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureImportBGRA(ref WebPPicture picture, IntPtr bgra, int bgra_stride);
+
+        /// <summary>
+        /// int WebPPictureImportBGRX(WebPPicture* picture, const uint8_t* bgrx, int bgrx_stride);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="bgrx"></param>
+        /// <param name="bgrx_stride"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureImportBGRX(ref WebPPicture picture, IntPtr bgrx, int bgrx_stride);
+
+        /// <summary>
+        /// Converts picture->argb data to the YUV420A format. The 'colorspace'
+        /// parameter is deprecated and should be equal to WEBP_YUV420.
+        /// Upon return, picture->use_argb is set to false. The presence of real
+        /// non-opaque transparent values is detected, and 'colorspace' will be
+        /// adjusted accordingly. Note that this method is lossy.
+        /// Returns false in case of error.
+        /// <br/>
+        /// int WebPPictureARGBToYUVA(WebPPicture* picture, WebPEncCSP /*colorspace = WEBP_YUV420*/);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name=""></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureARGBToYUVA(ref WebPPicture picture, WebPEncCSP colorspace);
+
+        /// <summary>
+        /// Same as WebPPictureARGBToYUVA(), but the conversion is done using
+        /// pseudo-random dithering with a strength 'dithering' between
+        /// 0.0 (no dithering) and 1.0 (maximum dithering). This is useful
+        /// for photographic picture.
+        /// <br/>
+        /// int WebPPictureARGBToYUVADithered(WebPPicture* picture, WebPEncCSP colorspace, float dithering);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="colorspace"></param>
+        /// <param name="dithering"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureARGBToYUVADithered(ref WebPPicture picture, WebPEncCSP colorspace, float dithering);
+
+        /// <summary>
+        /// Performs 'sharp' RGBA->YUVA420 downsampling and colorspace conversion.
+        /// Downsampling is handled with extra care in case of color clipping. This
+        /// method is roughly 2x slower than WebPPictureARGBToYUVA() but produces better
+        /// and sharper YUV representation.
+        /// Returns false in case of error.
+        /// <br/>
+        /// int WebPPictureSharpARGBToYUVA(WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureSharpARGBToYUVA(ref WebPPicture picture);
+
+        /// <summary>
+        /// kept for backward compatibility:
+        /// <br/>
+        /// int WebPPictureSmartARGBToYUVA(WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureSmartARGBToYUVA(ref WebPPicture picture);
+
+        /// <summary>
+        /// Converts picture->yuv to picture->argb and sets picture->use_argb to true.
+        /// The input format must be YUV_420 or YUV_420A. The conversion from YUV420 to
+        /// ARGB incurs a small loss too.
+        /// Note that the use of this colorspace is discouraged if one has access to the
+        /// raw ARGB samples, since using YUV420 is comparatively lossy.
+        /// Returns false in case of error.
+        /// <br/>
+        /// int WebPPictureYUVAToARGB(WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureYUVAToARGB(ref WebPPicture picture);
+
+        /// <summary>
+        /// Helper function: given a width x height plane of RGBA or YUV(A) samples
+        /// clean-up or smoothen the YUV or RGB samples under fully transparent area,
+        /// to help compressibility (no guarantee, though).
+        /// <br/>
+        /// void WebPCleanupTransparentArea(WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPCleanupTransparentArea(ref WebPPicture picture);
+
+        /// <summary>
+        /// Scan the picture 'picture' for the presence of non fully opaque alpha values.
+        /// Returns true in such case. Otherwise returns false (indicating that the
+        /// alpha plane can be ignored altogether e.g.).
+        /// <br/>
+        /// int WebPPictureHasTransparency(const WebPPicture* picture);
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPPictureHasTransparency(ref WebPPicture picture);
+
+        /// <summary>
+        /// Remove the transparency information (if present) by blending the color with
+        /// the background color 'background_rgb' (specified as 24bit RGB triplet).
+        /// After this call, all alpha values are reset to 0xff.
+        /// <br/>
+        /// void WebPBlendAlpha(WebPPicture* pic, uint32_t background_rgb);
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="background_rgb"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPBlendAlpha(ref WebPPicture pic, UInt64 background_rgb);
+
+        /// <summary>
+        /// Main encoding call, after config and picture have been initialized.
+        /// 'picture' must be less than 16384x16384 in dimension (cf WEBP_MAX_DIMENSION),
+        /// and the 'config' object must be a valid one.
+        /// Returns false in case of error, true otherwise.
+        /// In case of error, picture->error_code is updated accordingly.
+        /// 'picture' can hold the source samples in both YUV(A) or ARGB input, depending
+        /// on the value of 'picture->use_argb'. It is highly recommended to use
+        /// the former for lossy encoding, and the latter for lossless encoding
+        /// (when config.lossless is true). Automatic conversion from one format to
+        /// another is provided but they both incur some loss.
+        /// <br/>
+        /// int WebPEncode(const WebPConfig* config, WebPPicture* picture);
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPEncode(ref WebPConfig config, ref WebPPicture picture);
+
+        #endregion
+
+        #region utils
+
+        /// <summary>
+        /// size-checking safe malloc/calloc: verify that the requested size is not too
+        /// large, or return NULL. You don't need to call these for constructs like
+        /// malloc(sizeof(foo)), but only if there's picture-dependent size involved
+        /// somewhere (like: malloc(num_pixels * sizeof(*something))). That's why this
+        /// safe malloc() borrows the signature from calloc(), pointing at the dangerous
+        /// underlying multiply involved.
+        /// <br/>
+        /// void* WebPSafeMalloc(uint64_t nmemb, size_t size);
+        /// </summary>
+        /// <param name="nmemb"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPSafeMalloc(UInt64 nmemb, UInt64 size);
+
+        /// <summary>
+        /// Note that WebPSafeCalloc() expects the second argument type to be 'size_t'
+        /// in order to favor the "calloc(num_foo, sizeof(foo))" pattern.
+        /// <br/>
+        /// void* WebPSafeCalloc(uint64_t nmemb, size_t size);
+        /// </summary>
+        /// <param name="nmemb"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPSafeCalloc(UInt64 nmemb, UInt64 size);
+
+        /// <summary>
+        /// Companion deallocation function to the above allocations.
+        /// <br/>
+        /// void WebPSafeFree(void* const ptr);
+        /// </summary>
+        /// <param name="ptr"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPSafeFree(IntPtr ptr);
+
+        /// <summary>
+        /// Copy width x height pixels from 'src' to 'dst' honoring the strides.
+        /// <br/>
+        /// void WebPCopyPlane(const uint8_t* src, int src_stride, uint8_t* dst, int dst_stride, int width, int height);
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="src_stride"></param>
+        /// <param name="dst"></param>
+        /// <param name="dst_stride"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPCopyPlane(IntPtr src, int src_stride, IntPtr dst, int dst_stride, int width, int height);
+
+        /// <summary>
+        /// Copy ARGB pixels from 'src' to 'dst' honoring strides. 'src' and 'dst' are
+        /// assumed to be already allocated and using ARGB data.
+        /// <br/>
+        /// void WebPCopyPixels(const struct WebPPicture* const src, struct WebPPicture* const dst);
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dst"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPCopyPixels(ref WebPPicture src, ref WebPPicture dst);
+
+        /// <summary>
+        /// Returns count of unique colors in 'pic', assuming pic->use_argb is true.
+        /// If the unique color count is more than MAX_PALETTE_SIZE, returns
+        /// MAX_PALETTE_SIZE+1.
+        /// If 'palette' is not NULL and number of unique colors is less than or equal to
+        /// MAX_PALETTE_SIZE, also outputs the actual unique colors into 'palette'.
+        /// Note: 'palette' is assumed to be an array already allocated with at least
+        /// MAX_PALETTE_SIZE elements.
+        /// <br/>
+        /// int WebPGetColorPalette(const struct WebPPicture* const pic, uint32_t* const palette);
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="palette"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int WebPGetColorPalette(ref WebPPicture pic, IntPtr palette);
+
+        #endregion
+
+        #region types
+
+        /// <summary>
+        /// Allocates 'size' bytes of memory. Returns NULL upon error. Memory
+        /// must be deallocated by calling WebPFree(). This function is made available
+        /// by the core 'libwebp' library.
+        /// <br/>
+        /// void* WebPMalloc(size_t size);
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr WebPMalloc(UInt64 size);
+
+        /// <summary>
+        /// Releases memory returned by the WebPDecode*() functions (from decode.h).
+        /// <br/>
+        /// void WebPFree(void* ptr);
+        /// </summary>
+        /// <param name="ptr"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void WebPFree(IntPtr ptr);
 
         #endregion
 
