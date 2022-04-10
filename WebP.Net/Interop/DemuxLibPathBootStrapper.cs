@@ -3,40 +3,40 @@ using System.IO;
 
 namespace WebP.Net.Interop
 {
-    internal class LibPathBootStrapper
+    internal class DemuxLibPathBootStrapper
     {
         internal static string LibPath { get; private set; }
 
-        static LibPathBootStrapper()
+        static DemuxLibPathBootStrapper()
         {
             string fileName = null;
             if (NativeLibraryLoader.IsWindows)
             {
                 if (NativeLibraryLoader.Is64Bit)
                 {
-                    fileName = "libwebp.dll";
+                    fileName = "libwebpdemux.dll";
                 }
                 else
                 {
-                    fileName = "libwebp.dll";
+                    fileName = "libwebpdemux.dll";
                 }
             }
             else if (NativeLibraryLoader.IsLinux)
             {
                 if (NativeLibraryLoader.Is64Bit)
                 {
-                    fileName = "libwebp.so";
+                    fileName = "libwebpdemux.so";
                 }
                 else
                 {
-                    fileName = "libwebp.so";
+                    fileName = "libwebpdemux.so";
                 }
             }
             else if (NativeLibraryLoader.IsMacOSX)
             {
                 if (NativeLibraryLoader.Is64Bit)
                 {
-                    fileName = "libwebp.dylib";
+                    fileName = "libwebpdemux.dylib";
                 }
             }
             if (string.IsNullOrEmpty(fileName)) throw new NotSupportedException($"OS not supported:{Environment.OSVersion}");

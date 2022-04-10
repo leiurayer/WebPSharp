@@ -1064,7 +1064,5 @@ namespace WebP.Net
 
         #endregion
 
-
-
     }
 }

@@ -1286,10 +1286,5 @@ namespace WebP.Net.Interop
 
         #endregion
 
-
-
-
-
-
     }
 }
