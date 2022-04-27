@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net452;net472;netstandard2.0;net6.0</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.5.1</Version>
+    <PackageId>WebPSharp</PackageId>
+    <Authors>Leiurayer</Authors>
+    <Company>Leiurayer</Company>
+    <Copyright>Copyright Leiurayer 2022</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <PackageProjectUrl>https://github.com/leiurayer/WebPSharp</PackageProjectUrl>
+    <Description>C# runtime library for WebP.</Description>
+  </PropertyGroup>
+
+  <Import Project="WebPSharp.targets" />
+
+  <ItemGroup>
+    <None Include="runtimes\**">
+      <PackagePath>runtimes</PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="WebPSharp.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="WebPSharp.targets">
+      <PackagePath>build</PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="System.Drawing.Common">
+      <Version>6.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Drawing.Common">
+      <Version>6.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation">
+      <Version>4.3.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
