@@ -1,37 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.1;</TargetFrameworks>
+    <TargetFrameworks>net452;net472;netstandard2.0;net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>0.5.0</Version>
     <PackageId>WebP.Net</PackageId>
     <Authors>Leiurayer</Authors>
     <Company>Leiurayer</Company>
     <Copyright>Copyright Leiurayer 2022</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <PackageProjectUrl>https://github.com/leiurayer/WebP.Net</PackageProjectUrl>
   </PropertyGroup>
 
+  <Import Project="WebP.Net.targets" />
+
   <ItemGroup>
-    <None Update="x64\libwebp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="runtimes\**">
+      <PackagePath>runtimes</PackagePath>
+      <Pack>true</Pack>
     </None>
-    <None Update="x64\libwebpdemux.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="WebP.Net.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="WebP.Net.targets">
+      <PackagePath>build</PackagePath>
+      <Pack>true</Pack>
     </None>
-    <None Update="x64\libwebpmux.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\libwebp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\libwebpdemux.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\libwebpmux.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="System.Drawing.Common">
+      <Version>6.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Drawing.Common">
+      <Version>6.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation">
+      <Version>4.3.0</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
